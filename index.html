@@ -4,79 +4,361 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Timers By D0a The FX 148</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0b0b0b;
-    --panel-bg: rgba(20,30,20,0.45);
-    --accent:#2fa84f;
-    --accent-2:#bfcf6f;
-    --danger:#d96b6b;
-    --text:#cfe9c9;
+    --bg: #07100a;
+    --bg2: #0d1a10;
+    --panel-bg: rgba(13, 26, 16, 0.72);
+    --accent: #10b981;
+    --accent-2: #34d399;
+    --accent-3: #6ee7b7;
+    --accent-dim: rgba(16,185,129,0.15);
+    --danger: #f87171;
+    --warning: #fbbf24;
+    --text: #ecfdf5;
+    --text-muted: rgba(236,253,245,0.45);
+    --border: rgba(16,185,129,0.16);
+    --border-bright: rgba(52,211,153,0.35);
+    --glow: 0 0 20px rgba(16,185,129,0.12);
+    --shadow: 0 4px 24px rgba(0,0,0,0.45);
+    --radius: 10px;
+    --radius-sm: 6px;
   }
-  html,body{height:100%;margin:0;padding:18px;background:var(--bg);color:var(--text);font-family:'Orbitron',sans-serif;box-sizing:border-box;}
-  /* Grid: desktop 4 columns, tablet 2, phone 1 */
-  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;grid-auto-rows:minmax(80px,auto);}
-  @media(max-width:1200px){.grid{grid-template-columns:repeat(2,1fr);}}
-  @media(max-width:700px){.grid{grid-template-columns:1fr;}}
-  .panel{background:var(--panel-bg);border-radius:6px;padding:12px;border:1px solid rgba(47,168,79,0.12);display:flex;flex-direction:column;gap:8px;min-width:0;}
-  h1{color:var(--accent-2);margin:0 0 6px 0;font-size:20px;letter-spacing:0.6px;}
-  h2{color:var(--accent-2);margin:0 0 6px 0;padding-bottom:6px;border-bottom:1px solid rgba(47,168,79,0.08);font-size:18px;}
-  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .label{width:140px;font-weight:700;color:var(--accent-2);font-size:13px;}
-  input,select,button{background:#111;border:1px solid rgba(47,168,79,0.12);color:var(--accent);padding:6px 8px;border-radius:4px;font-size:13px;min-height:34px;}
-  select.tz-select{min-width:220px;max-width:420px;}
-  button{cursor:pointer}
-  button:hover{background:var(--accent);color:#07110a;border-color:var(--accent-2)}
-  .countdown{width:120px;text-align:center;font-weight:700;color:var(--accent);text-shadow:0 0 4px rgba(47,168,79,0.08);font-size:15px;min-width:100px;}
-  .small{font-size:12px;color:var(--accent-2)}
-  .clock{font-family:'Orbitron',monospace;font-size:15px;color:var(--accent-2)}
-  .flash{animation:flash 1s ease-in-out 2}
-  @keyframes flash{0%{box-shadow:0 0 0 rgba(191,207,111,0)}50%{box-shadow:0 0 18px rgba(191,207,111,0.12)}100%{box-shadow:0 0 0 rgba(191,207,111,0)}}
-  .compact-row{display:flex;gap:6px;align-items:center;}
-  .small-input{width:70px}
-  .day-select{width:80px}
-  .panel-grid{display:grid;grid-template-columns:1fr;gap:8px}
-  @media(max-width:420px){.label{width:110px}.countdown{width:100px;font-size:13px}}
-  /* Branding badge */
-  .brand {
-    display:flex;
-    align-items:center;
-    gap:10px;
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Orbitron', sans-serif;
   }
-  .brand-badge{
-    background:linear-gradient(135deg, rgba(47,168,79,0.18), rgba(191,207,111,0.06));
-    border:1px solid rgba(191,207,111,0.06);
-    padding:8px 12px;
-    border-radius:8px;
-    color:var(--accent-2);
-    font-weight:700;
-    font-size:14px;
-    letter-spacing:0.6px;
+
+  body {
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(16,185,129,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(16,185,129,0.05) 0%, transparent 60%);
+    min-height: 100vh;
+    padding: 0;
   }
-  .brand-sub{font-size:12px;color:rgba(191,207,111,0.9)}
+
+  /* ── Header ── */
+  .header-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 20px 12px;
+    background: rgba(7,16,10,0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-badge {
+    background: linear-gradient(135deg, var(--accent), #059669);
+    color: #022c22;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+    box-shadow: 0 2px 12px rgba(16,185,129,0.35);
+  }
+  .brand-title { display: flex; flex-direction: column; gap: 1px; }
+  h1 {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.5px;
+  }
+  .brand-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 0.3px; }
+  .player-name-wrap { display: flex; align-items: center; gap: 6px; }
+  #player-name-display { cursor: pointer; }
+  #player-name-display:hover { color: var(--accent-3); }
+  #player-name-input {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 2px 8px;
+    min-height: unset;
+    width: 180px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 0 2px rgba(16,185,129,0.18);
+  }
+  #player-name-edit {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    min-height: unset;
+    padding: 2px 4px;
+    line-height: 1;
+    opacity: 0.6;
+    transition: opacity 0.15s, color 0.15s;
+    flex: 0 0 auto;
+  }
+  #player-name-edit:hover { opacity: 1; color: var(--accent-2); background: transparent; box-shadow: none; }
+  .header-right { display: flex; gap: 10px; align-items: center; }
+  .small { font-size: 11px; color: var(--text-muted); }
+  .clock {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    color: var(--accent-2);
+    white-space: nowrap;
+    background: var(--accent-dim);
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    letter-spacing: 1px;
+  }
+
+  /* ── Main content ── */
+  .page-body { padding: 16px 20px 24px; }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    grid-auto-rows: minmax(80px, auto);
+  }
+  @media(max-width:1200px){ .grid { grid-template-columns: repeat(2,1fr); } }
+  @media(max-width:700px)  { .grid { grid-template-columns: 1fr; } }
+
+  /* ── Panels ── */
+  .panel {
+    background: var(--panel-bg);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(52,211,153,0.06);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .panel:hover {
+    border-color: rgba(16,185,129,0.28);
+    box-shadow: var(--shadow), var(--glow), inset 0 1px 0 rgba(52,211,153,0.08);
+  }
+
+  h2 {
+    margin: 0 0 2px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Timer rows ── */
+  .panel-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+  .label {
+    width: 130px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    letter-spacing: 0.2px;
+  }
+
+  /* ── Inputs & selects ── */
+  input, select {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 5px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    min-height: 34px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(16,185,129,0.18);
+  }
+  input::placeholder { color: var(--text-muted); }
+  select.tz-select { flex: 1; min-width: 140px; max-width: 100%; }
+  option { background: #0d1a10; }
+
+  /* ── Buttons ── */
+  button {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid var(--border-bright);
+    color: var(--accent-2);
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    min-height: 34px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+    letter-spacing: 0.3px;
+  }
+  button:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #022c22;
+    box-shadow: 0 0 12px rgba(16,185,129,0.3);
+  }
+  button:active { transform: scale(0.97); }
+
+  /* start btn is slightly more prominent */
+  .start-btn {
+    background: rgba(16,185,129,0.18);
+    border-color: var(--accent);
+    color: var(--accent-2);
+  }
+  .start-btn:hover {
+    background: var(--accent);
+    color: #022c22;
+  }
+
+  /* reset btn is subtle */
+  .reset-btn {
+    background: rgba(248,113,113,0.08);
+    border-color: rgba(248,113,113,0.3);
+    color: rgba(248,113,113,0.8);
+  }
+  .reset-btn:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(248,113,113,0.3);
+  }
+
+  /* ── Countdown display ── */
+  .countdown {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-2);
+    background: rgba(16,185,129,0.08);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 4px 8px;
+    min-width: 88px;
+    text-align: center;
+    letter-spacing: 1px;
+    transition: color 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+
+  /* ── Small inputs ── */
+  .small-input { width: 60px; text-align: center; }
+  .day-select  { width: 84px; }
+
+  /* ── Compact rows ── */
+  .compact-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+  /* ── Animations ── */
+  @keyframes flash {
+    0%   { box-shadow: 0 0 0 rgba(52,211,153,0); }
+    50%  { box-shadow: 0 0 24px rgba(52,211,153,0.4); }
+    100% { box-shadow: 0 0 0 rgba(52,211,153,0); }
+  }
+  .flash { animation: flash 0.8s ease-in-out 3; }
+
+  /* ── Test alarm button ── */
+  #test-alarm-btn {
+    background: rgba(16,185,129,0.1);
+    border-color: var(--border-bright);
+    color: var(--accent-2);
+    font-size: 12px;
+    min-height: 32px;
+    padding: 4px 12px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    border-radius: 20px;
+  }
+
+  /* ── Tablet (≤900px) ── */
+  @media(max-width:900px){
+    input, select, button { min-height: 40px; font-size: 13px; }
+  }
+
+  /* ── Mobile (≤600px) ── */
+  @media(max-width:600px){
+    .header-wrap { padding: 10px 14px; flex-direction: column; align-items: flex-start; }
+    .header-right { width: 100%; }
+    .tz-label { display: none; }
+    select.tz-select { flex: 1; min-width: 0; }
+    .page-body { padding: 12px 12px 20px; }
+    #build-panel { grid-column: span 1 !important; }
+    h1 { font-size: 16px; }
+    h2 { font-size: 12px; }
+    .row { gap: 5px; }
+    .row .label { width: 100%; margin-bottom: 1px; }
+    input, select { min-height: 44px; font-size: 13px; }
+    button { min-height: 44px; font-size: 12px; flex: 1 1 auto; min-width: 46px; max-width: 90px; }
+    .small-input { width: 58px; flex-shrink: 0; }
+    .day-select  { width: 74px; flex-shrink: 0; }
+    .countdown   { font-size: 13px; min-width: 80px; width: auto; flex-shrink: 0; }
+    input[type="date"], input[type="time"] { flex: 1 1 auto; min-width: 0; }
+    #shield-select { flex: 1 1 auto; min-width: 0; }
+  }
+
+  /* ── Very small (≤360px) ── */
+  @media(max-width:360px){
+    .small-input { width: 52px; }
+    .day-select  { width: 68px; }
+    .countdown   { min-width: 72px; }
+    .brand-badge { font-size: 11px; padding: 5px 10px; }
+  }
 </style>
 </head>
 <body>
 
-<header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-  <div>
-    <div class="brand">
-      <div class="brand-badge">Timers By D0a</div>
-      <div style="display:flex;flex-direction:column;">
-        <h1 style="margin:0">The FX 148</h1>
-        <div class="brand-sub">Compact timers dashboard</div>
+<header class="header-wrap">
+  <div class="brand">
+    <div class="brand-badge">Timers By D0a</div>
+    <div class="brand-title">
+      <div class="player-name-wrap">
+        <h1 id="player-name-display" title="Click to set your name">The FX 148</h1>
+        <input id="player-name-input" type="text" maxlength="32" placeholder="Enter your name…" style="display:none;" autocomplete="off" spellcheck="false">
+        <button id="player-name-edit" title="Edit name" aria-label="Edit name">✎</button>
       </div>
+      <div class="brand-sub">Compact timers dashboard</div>
     </div>
   </div>
 
-  <div style="display:flex;gap:12px;align-items:center;">
-    <label class="small" style="margin-right:6px">Timezone</label>
+  <div class="header-right">
+    <button id="test-alarm-btn">🔔 Test Alarm</button>
+    <label class="small tz-label">Timezone</label>
     <select id="timezone-select" class="tz-select"></select>
     <div id="local-clock" class="clock" aria-live="polite"></div>
   </div>
 </header>
 
+<div class="page-body">
 <div class="grid">
 
   <!-- Trucks -->
@@ -113,8 +395,8 @@
       <span id="tyrant-military">--:--</span>
     </div>
     <div class="row">
-      <button id="tyrant-start">Start</button>
-      <button id="tyrant-reset">Reset</button>
+      <button id="tyrant-start" class="start-btn">Start</button>
+      <button id="tyrant-reset" class="reset-btn">Reset</button>
       <span class="countdown" id="tyrant-display" data-target="">00:00:00</span>
     </div>
   </div>
@@ -123,15 +405,16 @@
   <div class="panel" id="cc-panel">
     <h2>CC Clash</h2>
     <div class="row">
-      <div class="label">Select Clash Time</div>
+      <div class="label">Apocalypse Time</div>
       <select id="cc-time">
         <option value="">-- Select --</option>
+        <option value="09:00">09:00</option>
         <option value="18:00">18:00</option>
         <option value="23:00">23:00</option>
       </select>
     </div>
     <div class="row">
-      <button id="cc-reset">Reset</button>
+      <button id="cc-reset" class="reset-btn">Reset</button>
       <span class="countdown" id="cc-display" data-target="">00:00:00</span>
     </div>
   </div>
@@ -148,8 +431,8 @@
       <input type="time" id="glory-time" step="60">
     </div>
     <div class="row">
-      <button id="glory-start">Start</button>
-      <button id="glory-reset">Reset</button>
+      <button id="glory-start" class="start-btn">Start</button>
+      <button id="glory-reset" class="reset-btn">Reset</button>
       <span class="countdown" id="glory-display" data-target="">00:00:00</span>
     </div>
   </div>
@@ -179,13 +462,44 @@
   </div>
 
 </div>
+</div>
 
 <script>
 /* Utilities */
 function pad(n){ return String(n).padStart(2,'0'); }
 function formatDuration(ms){ if(ms<=0) return "00:00:00"; let s=Math.floor(ms/1000); let h=Math.floor(s/3600); let m=Math.floor((s%3600)/60); let sec=s%60; return pad(h)+":"+pad(m)+":"+pad(sec); }
-function colorize(el, ms){ if(!el) return; if(ms>3600000){ el.style.color="#2fa84f"; } else if(ms>600000){ el.style.color="#bfcf6f"; } else { el.style.color="#d96b6b"; } }
-function playAlarm(){ try{ new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg").play(); }catch(e){} }
+function colorize(el, ms){ if(!el) return; if(ms>3600000){ el.style.color="var(--accent-2)"; el.style.borderColor="var(--border)"; el.style.boxShadow=""; } else if(ms>600000){ el.style.color="var(--warning)"; el.style.borderColor="rgba(251,191,36,0.3)"; el.style.boxShadow=""; } else { el.style.color="var(--danger)"; el.style.borderColor="rgba(248,113,113,0.4)"; el.style.boxShadow="0 0 8px rgba(248,113,113,0.2)"; } }
+let _audioCtx = null;
+function getAudioCtx(){
+  if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(_audioCtx.state === "suspended") _audioCtx.resume();
+  return _audioCtx;
+}
+function playBeep(freq, startTime, duration, ctx){
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, startTime);
+  gain.gain.setValueAtTime(0.8, startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.start(startTime);
+  osc.stop(startTime + duration);
+}
+function playAlarm(){
+  try{
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    // 3 rising beeps
+    playBeep(880, now,        0.18, ctx);
+    playBeep(880, now + 0.25, 0.18, ctx);
+    playBeep(1100, now + 0.5, 0.35, ctx);
+  } catch(e){}
+}
+// Unlock audio on first user interaction (required by mobile browsers)
+document.addEventListener("click", ()=>{ try{ getAudioCtx(); }catch(e){} }, {once:true});
+document.addEventListener("touchstart", ()=>{ try{ getAudioCtx(); }catch(e){} }, {once:true});
 function notify(title, body){ try{ if(window.Notification && Notification.permission==="granted"){ new Notification(title,{body}); } else if(window.Notification && Notification.permission!=="denied"){ Notification.requestPermission().then(p=>{ if(p==="granted") new Notification(title,{body}); }); } }catch(e){} }
 
 /* Timezone selector (auto-detect) */
@@ -332,8 +646,8 @@ class DayHMTimer {
 function createHMRow(label, storageKey){
   const row = document.createElement("div"); row.className="row";
   row.innerHTML = `<div class="label">${label}</div>
-    <input type="number" min="0" max="23" placeholder="Hours" class="small-input">
-    <input type="number" min="0" max="59" placeholder="Minutes" class="small-input">
+    <input type="number" min="0" max="23" placeholder="H" class="small-input">
+    <input type="number" min="0" max="59" placeholder="M" class="small-input">
     <button class="start-btn">Start</button>
     <button class="reset-btn">Reset</button>
     <span class="countdown" data-end="">00:00:00</span>`;
@@ -344,13 +658,13 @@ function createHMRow(label, storageKey){
 function createDayHMRow(label, storageKey){
   const row = document.createElement("div"); row.className="row";
   row.innerHTML = `<div class="label">${label}</div>
-    <select class="day-select day-select">
+    <select class="day-select">
       <option value="">Day</option>
       <option value="1">Day 1</option><option value="2">Day 2</option><option value="3">Day 3</option>
       <option value="4">Day 4</option><option value="5">Day 5</option><option value="6">Day 6</option><option value="7">Day 7</option>
     </select>
-    <input type="number" min="0" max="23" placeholder="Hours" class="small-input">
-    <input type="number" min="0" max="59" placeholder="Minutes" class="small-input">
+    <input type="number" min="0" max="23" placeholder="H" class="small-input">
+    <input type="number" min="0" max="59" placeholder="M" class="small-input">
     <button class="start-btn">Start</button>
     <button class="reset-btn">Reset</button>
     <span class="countdown" data-end="">00:00:00</span>`;
@@ -364,7 +678,7 @@ function wireShield(){
   const host = document.getElementById("shield-area");
   host.innerHTML = `<div class="row"><div class="label">Shield</div>
     <select id="shield-select"><option value="">Select</option><option value="8">8 hours</option><option value="24">24 hours</option><option value="72">3 days</option></select>
-    <button id="shield-set">Set</button><button id="shield-reset">Reset</button>
+    <button id="shield-set" class="start-btn">Set</button><button id="shield-reset" class="reset-btn">Reset</button>
     <span id="shield-display" class="countdown" data-end="">00:00:00</span></div>`;
   const sel = document.getElementById("shield-select"), setBtn = document.getElementById("shield-set"), resetBtn = document.getElementById("shield-reset"), disp = document.getElementById("shield-display");
   const saved = localStorage.getItem("shield_end_v1"); if(saved) disp.dataset.end = saved;
@@ -535,37 +849,6 @@ function globalUpdate(){
   }
 }
 
-/* Create row helpers (reused) */
-function createHMRow(label, storageKey){
-  const row = document.createElement("div"); row.className="row";
-  row.innerHTML = `<div class="label">${label}</div>
-    <input type="number" min="0" max="23" placeholder="Hours" class="small-input">
-    <input type="number" min="0" max="59" placeholder="Minutes" class="small-input">
-    <button class="start-btn">Start</button>
-    <button class="reset-btn">Reset</button>
-    <span class="countdown" data-end="">00:00:00</span>`;
-  const hoursEl = row.children[1], minsEl = row.children[2], startBtn = row.querySelector(".start-btn"), resetBtn = row.querySelector(".reset-btn"), display = row.querySelector(".countdown");
-  new ManualTimer(display, hoursEl, minsEl, startBtn, resetBtn, storageKey);
-  return {row, display};
-}
-function createDayHMRow(label, storageKey){
-  const row = document.createElement("div"); row.className="row";
-  row.innerHTML = `<div class="label">${label}</div>
-    <select class="day-select day-select">
-      <option value="">Day</option>
-      <option value="1">Day 1</option><option value="2">Day 2</option><option value="3">Day 3</option>
-      <option value="4">Day 4</option><option value="5">Day 5</option><option value="6">Day 6</option><option value="7">Day 7</option>
-    </select>
-    <input type="number" min="0" max="23" placeholder="Hours" class="small-input">
-    <input type="number" min="0" max="59" placeholder="Minutes" class="small-input">
-    <button class="start-btn">Start</button>
-    <button class="reset-btn">Reset</button>
-    <span class="countdown" data-end="">00:00:00</span>`;
-  const daySel = row.querySelector(".day-select"), hoursEl = row.children[2], minsEl = row.children[3], startBtn = row.querySelector(".start-btn"), resetBtn = row.querySelector(".reset-btn"), display = row.querySelector(".countdown");
-  new DayHMTimer(display, daySel, hoursEl, minsEl, startBtn, resetBtn, storageKey);
-  return {row, display};
-}
-
 /* Init */
 function init(){
   populateTimezoneSelect();
@@ -578,6 +861,43 @@ function init(){
   const savedG = localStorage.getItem("glory_target_v1"); if(savedG) document.getElementById("glory-display").dataset.target = savedG;
   const savedCC = localStorage.getItem("cc_target_v1"); if(savedCC) document.getElementById("cc-display").dataset.target = savedCC;
   const savedShield = localStorage.getItem("shield_end_v1"); if(savedShield) document.getElementById("shield-display").dataset.end = savedShield;
+
+  // Player name (persisted per device)
+  const NAME_KEY = "player_name_v1";
+  const nameDisplay = document.getElementById("player-name-display");
+  const nameInput   = document.getElementById("player-name-input");
+  const nameEdit    = document.getElementById("player-name-edit");
+  const saved = localStorage.getItem(NAME_KEY);
+  if(saved) nameDisplay.textContent = saved;
+  function startEdit(){
+    nameInput.value = nameDisplay.textContent === "The FX 148" ? "" : nameDisplay.textContent;
+    nameDisplay.style.display = "none";
+    nameEdit.style.display    = "none";
+    nameInput.style.display   = "inline-block";
+    nameInput.focus();
+    nameInput.select();
+  }
+  function commitEdit(){
+    const val = nameInput.value.trim();
+    nameDisplay.textContent   = val || "The FX 148";
+    nameDisplay.style.display = "";
+    nameEdit.style.display    = "";
+    nameInput.style.display   = "none";
+    if(val) localStorage.setItem(NAME_KEY, val);
+    else    localStorage.removeItem(NAME_KEY);
+  }
+  nameDisplay.addEventListener("click", startEdit);
+  nameEdit.addEventListener("click", startEdit);
+  nameInput.addEventListener("blur", commitEdit);
+  nameInput.addEventListener("keydown", e=>{
+    if(e.key === "Enter") { e.preventDefault(); nameInput.blur(); }
+    if(e.key === "Escape"){ nameInput.value = nameDisplay.textContent; nameInput.blur(); }
+  });
+
+  // Test alarm button
+  document.getElementById("test-alarm-btn").addEventListener("click", ()=>{
+    playAlarm();
+  });
 
   // start loop
   globalUpdate();
